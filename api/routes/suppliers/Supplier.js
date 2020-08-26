@@ -15,11 +15,11 @@ class Supplier {
     }
 
     async load() {
-        const result = await SupplierTableModel.findOne({
-            where: {
-                id: this.id
+        const result = await SupplierTableModel.findOne(
+            {
+                where: { id: this.id }
             }
-        });
+        );
 
         if(!result)
             throw new Error('Supplier not found');
@@ -43,6 +43,25 @@ class Supplier {
         this.createdAt = result.createdAt;
         this.updatedAt = result.updatedAt;
         this.version = result.createdAt;
+    }
+
+    async update(newData) {
+        await this.load();
+
+        for(let property in newData) {
+            if (typeof newData[property] !== 'string' || 
+                newData[property] === '' ||
+                !this.hasOwnProperty(property)) {
+                    throw new Error('Fail to update supplier due to invalid data type');
+            }
+        }
+        
+        await SupplierTableModel.update(
+            newData,
+            {
+                where: { id: this.id }
+            }
+        );
     }
 }
 

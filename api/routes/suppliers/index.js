@@ -25,4 +25,17 @@ router.post('/', async (req, res) => {
     res.send(JSON.stringify(supplier));
 });
 
+router.put('/:id', async (req, res) => {
+    try {
+        const id = req.params.id;
+        const supplier = new Supplier({id});
+        await supplier.update(req.body);
+        res.status(200).end();
+    } catch(err) {
+        res.send(JSON.stringify({
+            message: err.message
+        }));
+    }
+});
+
 module.exports = router;
