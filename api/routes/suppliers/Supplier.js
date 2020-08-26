@@ -14,6 +14,24 @@ class Supplier {
         return SupplierTableModel.findAll();
     }
 
+    async load() {
+        const result = await SupplierTableModel.findOne({
+            where: {
+                id: this.id
+            }
+        });
+
+        if(!result)
+            throw new Error('Supplier not found');
+
+        this.company = result.company;
+        this.email = result.email;
+        this.category = result.category;
+        this.createdAt = result.createdAt;
+        this.updatedAt = result.updatedAt;
+        this.version = result.version;
+    }
+
     async create() {
         const result = await SupplierTableModel.create({
             company: this.company, 
