@@ -1,9 +1,15 @@
 const router = require('express').Router();
-const SupplierTableModel = require('./SupplierTableModel');
+const Supplier = require('./Supplier');
 
-router.use('/', async (req, res) => {
-    const result = await SupplierTableModel.findAll();
+router.get('/', async (req, res) => {
+    const result = await Supplier.list();
     res.send(JSON.stringify(result));
+});
+
+router.post('/', async (req, res) => {
+    const supplier = new Supplier(req.body);
+    await supplier.create();
+    res.send(JSON.stringify(supplier));
 });
 
 module.exports = router;
