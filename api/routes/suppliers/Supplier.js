@@ -1,4 +1,7 @@
 const SupplierTableModel = require('./SupplierTableModel');
+const NotFound = require('../../errors/NotFound');
+const InvalidData = require('../../errors/InvalidData');
+const NoData = require('../../errors/NoData');
 
 class Supplier {
     constructor({id, company, email, category, createdAt, updatedAt, version}) {
@@ -23,7 +26,7 @@ class Supplier {
         );
 
         if(!result)
-            throw new Error('Supplier not found');
+            throw new NotFound();
 
         this.company = result.company;
         this.email = result.email;
@@ -52,9 +55,6 @@ class Supplier {
         await this.load();
 
         const validData = this.validateData(propsObj);
-
-        if(Object.keys(validData).length === 0)
-            throw new Error('No data to be updated');
         
         await SupplierTableModel.update(
             validData,
@@ -81,9 +81,12 @@ class Supplier {
                 this.hasOwnProperty(property)) {
                     validData[property] = propsObj[property];
             } else {
-                throw new Error('Fail to insert or update supplier due to invalid data');
+                throw new InvalidData();
             }
         }
+
+        if(Object.keys(validData).length === 0)
+            throw new NoData();
 
         return validData;
     }

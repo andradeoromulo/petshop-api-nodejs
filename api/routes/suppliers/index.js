@@ -6,54 +6,46 @@ router.get('/', async (req, res) => {
     res.send(JSON.stringify(result));
 });
 
-router.get('/:id', async (req, res) => {
+router.get('/:id', async (req, res, next) => {
     try {
         const id = req.params.id;
         const supplier = new Supplier({id});
         await supplier.load();
         res.send(JSON.stringify(supplier));
     } catch(err) {
-        res.send(JSON.stringify({
-            message: err.message
-        }));
+        next(err);
     }
 });
 
-router.post('/', async (req, res) => {
+router.post('/', async (req, res, next) => {
     try{
         const supplier = new Supplier(req.body);
         await supplier.create();
-        res.send(JSON.stringify(supplier));
+        res.status(201).send(JSON.stringify(supplier));
     } catch(err) {
-        res.send(JSON.stringify({
-            message: err.message
-        }));
+        next(err);
     }
 });
 
-router.put('/:id', async (req, res) => {
+router.put('/:id', async (req, res, next) => {
     try {
         const id = req.params.id;
         const supplier = new Supplier({id});
         await supplier.update(req.body);
-        res.status(200).end();
+        res.status(204).end();
     } catch(err) {
-        res.send(JSON.stringify({
-            message: err.message
-        }));
+        next(err);
     }
 });
 
-router.delete('/:id', async(req, res) => {
+router.delete('/:id', async(req, res, next) => {
     try {
         const id = req.params.id;
         const supplier = new Supplier({id});
         await supplier.delete();
-        res.status(200).end();
+        res.status(204).end();
     } catch (err) {
-        res.send(JSON.stringify({
-            message: err.message
-        }));
+        next(err);
     }
 });
 
