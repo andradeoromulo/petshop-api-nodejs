@@ -20,9 +20,15 @@ router.get('/:id', async (req, res) => {
 });
 
 router.post('/', async (req, res) => {
-    const supplier = new Supplier(req.body);
-    await supplier.create();
-    res.send(JSON.stringify(supplier));
+    try{
+        const supplier = new Supplier(req.body);
+        await supplier.create();
+        res.send(JSON.stringify(supplier));
+    } catch(err) {
+        res.send(JSON.stringify({
+            message: err.message
+        }));
+    }
 });
 
 router.put('/:id', async (req, res) => {

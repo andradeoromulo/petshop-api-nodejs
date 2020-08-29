@@ -10,6 +10,7 @@ class Supplier {
         this.updatedAt = updatedAt;
         this.version = version;
     }
+
     static list() {
         return SupplierTableModel.findAll();
     }
@@ -33,10 +34,12 @@ class Supplier {
     }
 
     async create() {
+        const validData = this.validateData({company: this.company, email: this.email, category: this.category});
+
         const result = await SupplierTableModel.create({
-            company: this.company, 
-            email: this.email,
-            category: this.category
+            company: validData.company, 
+            email: validData.email,
+            category: validData.category
         });
 
         this.id = result.id;
@@ -45,19 +48,16 @@ class Supplier {
         this.version = result.createdAt;
     }
 
-    async update(newData) {
+    async update(propsObj) {
         await this.load();
 
-        for(let property in newData) {
-            if (typeof newData[property] !== 'string' || 
-                newData[property] === '' ||
-                !this.hasOwnProperty(property)) {
-                    throw new Error('Fail to update supplier due to invalid data type');
-            }
-        }
+        const validData = this.validateData(propsObj);
+
+        if(Object.keys(validData).length === 0)
+            throw new Error('No data to be updated');
         
         await SupplierTableModel.update(
-            newData,
+            validData,
             {
                 where: { id: this.id }
             }
@@ -70,6 +70,22 @@ class Supplier {
         await SupplierTableModel.destroy({
             where: { id: this.id }
         });
+    }
+
+    validateData(propsObj) {
+        const validData = {};
+
+        for (let property in propsObj) {
+            if(typeof propsObj[property] === 'string' &&
+                propsObj[property] !== '' &&
+                this.hasOwnProperty(property)) {
+                    validData[property] = propsObj[property];
+            } else {
+                throw new Error('Fail to insert or update supplier due to invalid data');
+            }
+        }
+
+        return validData;
     }
 }
 
