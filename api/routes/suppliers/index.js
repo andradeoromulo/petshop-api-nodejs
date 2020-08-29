@@ -38,4 +38,17 @@ router.put('/:id', async (req, res) => {
     }
 });
 
+router.delete('/:id', async(req, res) => {
+    try {
+        const id = req.params.id;
+        const supplier = new Supplier({id});
+        await supplier.delete();
+        res.status(200).end();
+    } catch (err) {
+        res.send(JSON.stringify({
+            message: err.message
+        }));
+    }
+});
+
 module.exports = router;

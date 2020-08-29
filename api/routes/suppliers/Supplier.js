@@ -63,6 +63,14 @@ class Supplier {
             }
         );
     }
+
+    async delete() {
+        await this.load();
+
+        await SupplierTableModel.destroy({
+            where: { id: this.id }
+        });
+    }
 }
 
 module.exports = Supplier;
