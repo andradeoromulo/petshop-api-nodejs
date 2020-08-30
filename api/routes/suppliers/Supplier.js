@@ -15,7 +15,9 @@ class Supplier {
     }
 
     static list() {
-        return SupplierTableModel.findAll();
+        return SupplierTableModel.findAll({
+            raw: true
+        });
     }
 
     async load() {
