@@ -1,3 +1,4 @@
+const jsontoxml = require('jsontoxml');
 const InvalidFormat = require('./errors/InvalidFormat');
 
 class Serializer {
@@ -6,6 +7,8 @@ class Serializer {
 
         if(this.contentType === 'application/json') 
             return this.json(newObj);
+        else if(this.contentType === 'application/xml')
+            return this.xml(newObj);
         
         throw new InvalidFormat();
     }
@@ -34,18 +37,44 @@ class Serializer {
     json(data) {
         return JSON.stringify(data);
     }
+
+    xml(data) {
+        let tag = this.tagSingular;
+
+        if(Array.isArray(data)) {
+            tag = this.tagPlural;
+            data = data.map((obj) => {
+                return { [this.tagSingular]: obj }
+            });
+        }
+
+        return jsontoxml({ [tag]: data });
+    }
 }
 
 class SupplierSerializer extends Serializer {
-    constructor(contentType) {
+    constructor(contentType, extraProps) {
         super();
         this.contentType = contentType;
-        this.publicProps = ['id', 'company', 'category']; 
+        this.publicProps = ['id', 'company', 'category'].concat(extraProps || []); 
+        this.tagSingular = 'supplier';
+        this.tagPlural = 'suppliers';
+    }
+}
+
+class ErrorSerializer extends Serializer {
+    constructor(contentType, extraProps) {
+        super();
+        this.contentType = contentType;
+        this.publicProps = ['id', 'message'].concat(extraProps || []);
+        this.tagSingular = 'error';
+        this.tagPlural = 'errors';
     }
 }
 
 module.exports = {
     Serializer: Serializer,
     SupplierSerializer: SupplierSerializer,
-    acceptedFormats: ['application/json', '*/*']
+    ErrorSerializer: ErrorSerializer,
+    acceptedFormats: ['application/json', 'application/xml']
 }

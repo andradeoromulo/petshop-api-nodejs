@@ -17,7 +17,10 @@ router.get('/:id', async (req, res, next) => {
         await supplier.load();
 
         const contentType = res.getHeader('Content-Type');
-        const serializer = new SupplierSerializer(contentType);
+        const serializer = new SupplierSerializer(
+            contentType,
+            ['createdAt', 'updatedAt', 'version']
+        );
         res.send(serializer.serialize(supplier));
     } catch(err) {
         next(err);

@@ -4,12 +4,12 @@ const config = require('config');
 const router = require('./routes/suppliers/index');
 
 const acceptedFormats = require('./Serializer').acceptedFormats;
+const ErrorSerializer = require('./Serializer').ErrorSerializer;    
 
 // Errors
 const NotFound = require('./errors/NotFound');
 const InvalidData = require('./errors/InvalidData');
 const NoData = require('./errors/NoData');
-const InvalidFormat = require('./errors/InvalidFormat');
 
 const app = express();
 
@@ -39,13 +39,9 @@ app.use((err, req, res, next) => {
         status = 404;
     else if(err instanceof InvalidData || err instanceof NoData)
         status = 400;
-    else if(err instanceof InvalidFormat)
-        status = 406;
 
-    res.status(status).send(JSON.stringify({
-        message: err.message,
-        id: err.id
-    }));
-});
+    const serializer = new ErrorSerializer(res.getHeader('Content-Type'))
+    res.status(status).send(serializer.serialize(err));
+}); 
 
 app.listen(config.get('api.port'), () => console.log('Server running on port 3000'));
