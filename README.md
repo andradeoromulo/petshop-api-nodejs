@@ -16,13 +16,15 @@ $ npm start
 ```
 
 ## Endpoints
-Method | URN | Description
--------|-----|-------------
-GET | `/api/suppliers` | List all the suppliers
-GET | `/api/suppliers/{id}` | Get an specific supplier register
-POST | `/api/suppliers` | Create a new supplier register
-PUT | `/api/suppliers/{id}` | Update something in an existing supplier register
-DELETE | `/api/suppliers/{id}` | Delete an specific supplier register
+Endpoints | Description
+----------|-------------
+GET `/api/suppliers` | List all the suppliers
+GET `/api/suppliers/{id}` | Get an specific supplier register
+POST `/api/suppliers` | Create a new supplier register
+PUT `/api/suppliers/{id}` | Update something in an existing supplier register
+DELETE `/api/suppliers/{id}` | Delete an specific supplier register
+
+It's possible to send requests with `Accept` header set to `application/json` or `application/xml`.
 
 ## Feedback
 I'm a student and I really would like to hear case you have any tips, correction suggestions or comments about any my of projects (🤓).
