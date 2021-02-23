@@ -77,6 +77,22 @@ class Product {
             }
         })
     }
+
+    async decreaseQuantity(itemsToBeDecreased) {
+        this.quantity -= itemsToBeDecreased;
+
+        await ProductTableModel.update(
+            {
+                quantity: this.quantity
+            },
+            {
+                where: {
+                    id: this.id,
+                    supplier: this.supplier
+                }
+            }
+        );
+    }
 } 
 
 module.exports = Product;

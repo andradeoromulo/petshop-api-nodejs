@@ -78,4 +78,20 @@ router.delete('/:productId', async (req, res, next) => {
     }
 });
 
+router. post('/:productId/decrease-quantity', async (req, res, next) => {
+    try {
+        const data = {
+            id: req.params.productId,
+            supplier: req.supplier.id
+        }
+
+        const product = new Product(data);
+        await product.load();
+        await product.decreaseQuantity(req.body.quantity);
+        res.status(204).end();
+    } catch(err) {
+        next(err);
+    }
+});
+
 module.exports = router;
