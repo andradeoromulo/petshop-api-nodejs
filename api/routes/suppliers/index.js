@@ -16,7 +16,6 @@ const verifySupplierExistence = async (req, res, next) => {
     }
 }
 
-
 router.get('/', async (req, res) => {
     const result = await Supplier.list();
 

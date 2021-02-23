@@ -62,6 +62,16 @@ class SupplierSerializer extends Serializer {
     }
 }
 
+class ProductSerializer extends Serializer {
+    constructor(contentType, extraProps) {
+        super();
+        this.contentType = contentType;
+        this.publicProps = ['id', 'name'].concat(extraProps || []);
+        this.tagSingular = 'product';
+        this.tagPlural = 'products'
+    }
+}
+
 class ErrorSerializer extends Serializer {
     constructor(contentType, extraProps) {
         super();
@@ -75,6 +85,7 @@ class ErrorSerializer extends Serializer {
 module.exports = {
     Serializer: Serializer,
     SupplierSerializer: SupplierSerializer,
+    ProductSerializer: ProductSerializer,
     ErrorSerializer: ErrorSerializer,
     acceptedFormats: ['application/json', 'application/xml']
 }

@@ -1,3 +1,4 @@
+const NotFound = require('../../../errors/NotFound');
 const ProductTableModel = require('./ProductTableModel');
 
 class Product {
@@ -16,9 +17,30 @@ class Product {
         return ProductTableModel.findAll({
             where: {
                 supplier: supplierId
-            }
+            },
+            raw: true
         });
     } 
+
+    async load() {
+        const result = await ProductTableModel.findOne({
+            where: {
+                id: this.id,
+                supplier: this.supplier
+            },
+            raw: true
+        });
+
+        if(!result)
+            throw new NotFound();
+        
+        this.name = result.name;
+        this.price = result.price;
+        this.quantity = result.quantity;
+        this.createdAt = result.createdAt;
+        this.updatedAt = result.updatedAt;
+        this.version = result.version;
+    }
 
     async create() {
         const result = await ProductTableModel.create({
@@ -32,6 +54,19 @@ class Product {
         this.createdAt = result.createdAt;
         this.updatedAt = result.createdAt;
         this.version = result.version;
+    }
+
+    async update(propsObj) {
+        await this.load();
+        await ProductTableModel.update(
+            propsObj,
+            {
+                where: {
+                    id: this.id,
+                    supplier: this.supplier
+                }
+            }
+        );
     }
 
     async delete() {
