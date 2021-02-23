@@ -1,6 +1,21 @@
 const router = require('express').Router();
+const productsRouter = require('./products/index');
 const Supplier = require('./Supplier');
 const SupplierSerializer = require('../../Serializer').SupplierSerializer;
+
+// Middleware for supplier existence verification
+const verifySupplierExistence = async (req, res, next) => {
+    try {
+        const id = req.params.supplierId;
+        const supplier = new Supplier({ id: id });
+        await supplier.load();
+        req.supplier = supplier;
+        next();
+    } catch(err) {
+        next(err);
+    }
+}
+
 
 router.get('/', async (req, res) => {
     const result = await Supplier.list();
@@ -10,9 +25,9 @@ router.get('/', async (req, res) => {
     res.send(serializer.serialize(result));
 });
 
-router.get('/:id', async (req, res, next) => {
+router.get('/:supplierId', async (req, res, next) => {
     try {
-        const id = req.params.id;
+        const id = req.params.supplierId;
         const supplier = new Supplier({id});
         await supplier.load();
 
@@ -40,9 +55,9 @@ router.post('/', async (req, res, next) => {
     }
 });
 
-router.put('/:id', async (req, res, next) => {
+router.put('/:supplierId', async (req, res, next) => {
     try {
-        const id = req.params.id;
+        const id = req.params.supplierId;
         const supplier = new Supplier({id});
         await supplier.update(req.body);
         res.status(204).end();
@@ -51,9 +66,9 @@ router.put('/:id', async (req, res, next) => {
     }
 });
 
-router.delete('/:id', async(req, res, next) => {
+router.delete('/:supplierId', async(req, res, next) => {
     try {
-        const id = req.params.id;
+        const id = req.params.supplierId;
         const supplier = new Supplier({id});
         await supplier.delete();
         res.status(204).end();
@@ -61,5 +76,7 @@ router.delete('/:id', async(req, res, next) => {
         next(err);
     }
 });
+
+router.use('/:supplierId/products', verifySupplierExistence, productsRouter);
 
 module.exports = router;
