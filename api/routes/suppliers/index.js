@@ -16,12 +16,37 @@ const verifySupplierExistence = async (req, res, next) => {
     }
 }
 
+router.options('/', (req, res) => {
+    res.set('Access-Control-Allow-Methods', 'GET, POST');
+    res.set('Access-Control-Allow-Headers', 'Content-Type');
+    res.end();
+});
+
 router.get('/', async (req, res) => {
     const result = await Supplier.list();
 
     const contentType = res.getHeader('Content-Type');
     const serializer = new SupplierSerializer(contentType);
     res.send(serializer.serialize(result));
+});
+
+router.post('/', async (req, res, next) => {
+    try{
+        const supplier = new Supplier(req.body);
+        await supplier.create();
+
+        const contentType = res.getHeader('Content-Type');
+        const serializer = new SupplierSerializer(contentType);
+        res.status(201).send(serializer.serialize(supplier));
+    } catch(err) {
+        next(err);
+    }
+});
+
+router.options('/:supplierId', (req, res) => {
+    res.set('Access-Control-Allow-Methods', 'GET, PUT, DELETE');
+    res.set('Access-Control-Allow-Headers', 'Content-Type');
+    res.end();
 });
 
 router.get('/:supplierId', async (req, res, next) => {
@@ -36,19 +61,6 @@ router.get('/:supplierId', async (req, res, next) => {
             ['createdAt', 'updatedAt', 'version']
         );
         res.send(serializer.serialize(supplier));
-    } catch(err) {
-        next(err);
-    }
-});
-
-router.post('/', async (req, res, next) => {
-    try{
-        const supplier = new Supplier(req.body);
-        await supplier.create();
-
-        const contentType = res.getHeader('Content-Type');
-        const serializer = new SupplierSerializer(contentType);
-        res.status(201).send(serializer.serialize(supplier));
     } catch(err) {
         next(err);
     }

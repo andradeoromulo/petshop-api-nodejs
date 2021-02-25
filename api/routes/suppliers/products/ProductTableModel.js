@@ -29,7 +29,7 @@ const options = {
     freezeTableName: true,
     tableName: 'product',
     timestamps: true,
-    version: 'version'
+    version: true
 }
 
 module.exports = instance.define('product', columns, options);
